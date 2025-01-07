@@ -3,6 +3,7 @@ package br.com.codemathsz.job_management.modules.candidate.controllers;
 import br.com.codemathsz.job_management.exceptions.UserFoundException;
 import br.com.codemathsz.job_management.modules.candidate.CandidateEntity;
 import br.com.codemathsz.job_management.modules.candidate.CandidateRepository;
+import br.com.codemathsz.job_management.modules.candidate.useCases.CreateCandidateUseCase;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,15 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class CandidateController {
 
     @Autowired
-    private CandidateRepository repository;
+    private CreateCandidateUseCase createCandidateUseCase;
 
     @PostMapping("/")
     public CandidateEntity create(@Valid @RequestBody CandidateEntity candidateEntity){
-        this.repository
-        .findByUsernameOrEmail(candidateEntity.getUsername(), candidateEntity.getEmail())
-        .ifPresent((user) -> {
-            throw new UserFoundException();
-        });
-        return this.repository.save(candidateEntity);
+        return this.createCandidateUseCase.execute(candidateEntity);
     }
 }
