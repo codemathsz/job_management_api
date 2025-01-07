@@ -1,5 +1,6 @@
 package br.com.codemathsz.job_management.modules.candidate.controllers;
 
+import br.com.codemathsz.job_management.exceptions.UserFoundException;
 import br.com.codemathsz.job_management.modules.candidate.CandidateEntity;
 import br.com.codemathsz.job_management.modules.candidate.CandidateRepository;
 import jakarta.validation.Valid;
@@ -18,6 +19,11 @@ public class CandidateController {
 
     @PostMapping("/")
     public CandidateEntity create(@Valid @RequestBody CandidateEntity candidateEntity){
+        this.repository
+        .findByUsernameOrEmail(candidateEntity.getUsername(), candidateEntity.getEmail())
+        .ifPresent((user) -> {
+            throw new UserFoundException();
+        });
         return this.repository.save(candidateEntity);
     }
 }
