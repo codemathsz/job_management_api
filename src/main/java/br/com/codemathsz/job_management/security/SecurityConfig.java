@@ -16,7 +16,8 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())// CSRF => Cross Site Request Forgery
             .authorizeHttpRequests(auth ->{
                 auth.requestMatchers("/candidate/").permitAll()
-                        .requestMatchers("/company/").permitAll();
+                        .requestMatchers("/company/").permitAll()
+                        .requestMatchers("/auth/*").permitAll();
                 auth.anyRequest().authenticated();
             })
         ;
