@@ -25,7 +25,7 @@ public class AuthCompanyUseCase {
     private PasswordEncoder passwordEncoder;
 
     public String execute(AuthCompanyDTO authCompanyDTO) throws AuthenticationException {
-        var company = this.repository.findByUsername(authCompanyDTO.username()).orElseThrow(() -> new UsernameNotFoundException("Company not found"));
+        var company = this.repository.findByUsername(authCompanyDTO.username()).orElseThrow(() -> new UsernameNotFoundException("Username/password incorrect"));
 
         // verify password
         var passwordMatches = this.passwordEncoder.matches(authCompanyDTO.password(), company.getPassword());
