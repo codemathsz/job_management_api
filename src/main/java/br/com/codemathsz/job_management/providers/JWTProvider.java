@@ -19,7 +19,7 @@ public class JWTProvider {
             return JWT.require(algorithm)
                 .build()
                 .verify(token)
-                .getSubject()
+                .getSubject() // get id company/user
             ;
         } catch (JWTVerificationException e) {
             e.printStackTrace();

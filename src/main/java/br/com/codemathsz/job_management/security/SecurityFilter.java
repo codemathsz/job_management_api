@@ -22,21 +22,21 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        SecurityContextHolder.getContext().setAuthentication(null);
+        SecurityContextHolder.getContext().setAuthentication(null); // clear
         String header = request.getHeader("Authorization");
 
         if(header != null){
            //valid token
-            var subjectToken = this.jwtProvider.validateToken(header);
+            var subjectToken = this.jwtProvider.validateToken(header); // retrieve token of header
             if(subjectToken.isEmpty()){
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
             request.setAttribute("company_id", subjectToken);
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(subjectToken, null, Collections.emptyList());
-            SecurityContextHolder.getContext().setAuthentication(auth);
+            SecurityContextHolder.getContext().setAuthentication(auth); // inject auth spring security, because info users
         }
-
+        // valid route, verify if you need authorization
         filterChain.doFilter(request, response);
     }
 }
