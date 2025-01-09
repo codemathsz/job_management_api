@@ -1,5 +1,6 @@
 package br.com.codemathsz.job_management.modules.candidate.useCases;
 
+import br.com.codemathsz.job_management.modules.candidate.CandidateRepository;
 import br.com.codemathsz.job_management.modules.candidate.dto.AuthCandidateDTO;
 import br.com.codemathsz.job_management.modules.candidate.dto.AuthCandidateResponseDTO;
 import br.com.codemathsz.job_management.modules.company.repositories.CompanyRepository;
@@ -24,14 +25,14 @@ public class AuthCandidateUseCase {
     private String secretKey;
 
     @Autowired
-    private CompanyRepository repository;
+    private CandidateRepository repository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     public AuthCandidateResponseDTO execute(AuthCandidateDTO authCandidateDTO) throws AuthenticationException {
         var candidate =this.repository.findByUsername(authCandidateDTO.username())
-                .orElseThrow(() -> new UsernameNotFoundException("Username/password incorrect"))
+                .orElseThrow(() -> new UsernameNotFoundException("Username/password incorrectttt"))
         ;
 
         var passwordMatches = this.passwordEncoder.matches(authCandidateDTO.password(), candidate.getPassword());
@@ -41,16 +42,18 @@ public class AuthCandidateUseCase {
         }
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
+        var expiresIn = Instant.now().plus(Duration.ofHours(2));
         var token = JWT.create()
                 .withIssuer("javagas")
                 .withSubject(candidate.getId().toString())
                 .withClaim("roles", List.of("candidate")) // types of claims/demands
-                .withExpiresAt(Instant.now().plus(Duration.ofHours(2)))
+                .withExpiresAt(expiresIn)
                 .sign(algorithm)
         ;
 
         return AuthCandidateResponseDTO.builder()
         .access_token(token)
+        .expires_in(expiresIn.toEpochMilli())
         .build();
     }
 }
