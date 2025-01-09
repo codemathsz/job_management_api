@@ -33,7 +33,7 @@ public class CandidateController {
         }
     }
 
-    @GetMapping("/${id}")
+    @GetMapping("/")
     public ResponseEntity<Object> getCandidate(HttpServletRequest req){
         var candidateId = req.getAttribute("candidate_id");
         try{
