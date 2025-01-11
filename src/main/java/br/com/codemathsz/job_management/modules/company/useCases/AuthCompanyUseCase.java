@@ -1,6 +1,7 @@
 package br.com.codemathsz.job_management.modules.company.useCases;
 
 import br.com.codemathsz.job_management.modules.company.dto.AuthCompanyDTO;
+import br.com.codemathsz.job_management.modules.company.dto.AuthCompanyResponseDTO;
 import br.com.codemathsz.job_management.modules.company.repositories.CompanyRepository;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.naming.AuthenticationException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 
 @Service
 public class AuthCompanyUseCase {
@@ -26,7 +28,7 @@ public class AuthCompanyUseCase {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public String execute(AuthCompanyDTO authCompanyDTO) throws AuthenticationException {
+    public AuthCompanyResponseDTO execute(AuthCompanyDTO authCompanyDTO) throws AuthenticationException {
         var company = this.repository.findByUsername(authCompanyDTO.username()).orElseThrow(() -> new UsernameNotFoundException("Username/password incorrect"));
 
         // verify password
@@ -37,9 +39,17 @@ public class AuthCompanyUseCase {
         // generate jwt
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
 
-        return JWT.create().withIssuer("javagas")
-                .withExpiresAt(Instant.now().plus(Duration.ofHours(2)))// get actual hour and add + 2hours
+        var expireIn = Instant.now().plus(Duration.ofHours(2));
+
+        var token = JWT.create().withIssuer("javagas")
+                .withExpiresAt(expireIn)// get actual hour and add + 2hours
                 .withSubject(company.getId().toString())
+                .withClaim("roles", Arrays.asList("COMPANY"))
                 .sign(algorithm);
+
+        return AuthCompanyResponseDTO.builder()
+                .access_token(token)
+                .expire_in(expireIn.toEpochMilli())
+                .build();
     }
 }
