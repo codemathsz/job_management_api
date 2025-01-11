@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -34,10 +35,11 @@ public class CandidateController {
     }
 
     @GetMapping("/")
+    @PreAuthorize("hasRole('CANDIDATE')")
     public ResponseEntity<Object> getCandidate(HttpServletRequest req){
         var candidateId = req.getAttribute("candidate_id");
         try{
-            var profile = profileCandidateUseCase.execute(UUID.fromString(candidateId.toString()));
+            var profile = this.profileCandidateUseCase.execute(UUID.fromString(candidateId.toString()));
             return ResponseEntity.ok().body(profile);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

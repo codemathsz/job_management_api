@@ -46,7 +46,7 @@ public class AuthCandidateUseCase {
         var token = JWT.create()
                 .withIssuer("javagas")
                 .withSubject(candidate.getId().toString())
-                .withClaim("roles", List.of("candidate")) // types of claims/demands
+                .withClaim("roles", List.of("CANDIDATE")) // types of claims/demands
                 .withExpiresAt(expiresIn)
                 .sign(algorithm)
         ;
