@@ -5,5 +5,5 @@ import lombok.Builder;
 import java.util.UUID;
 
 @Builder
-public record ProfileCanidateResponseDTO(String description, String username, String email,UUID id, String name) {
+public record ProfileCandidateResponseDTO(String description, String username, String email, UUID id, String name) {
 }
