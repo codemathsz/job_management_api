@@ -37,8 +37,8 @@ public class SecurityFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(subjectToken, null, Collections.emptyList());
                 SecurityContextHolder.getContext().setAuthentication(auth); // inject auth spring security, because info users
             }
-            // valid route, verify if you need authorization
-            filterChain.doFilter(request, response);
         }
+        // valid route, verify if you need authorization
+        filterChain.doFilter(request, response);
     }
 }

@@ -36,8 +36,7 @@ public class SecurityCandidateFilter extends OncePerRequestFilter {
                 var roles = token.getClaim("roles");
             }
 
-            filterChain.doFilter(request, response);
         }
-
+        filterChain.doFilter(request, response);
     }
 }
