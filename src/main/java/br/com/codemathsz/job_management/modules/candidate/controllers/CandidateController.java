@@ -3,6 +3,7 @@ package br.com.codemathsz.job_management.modules.candidate.controllers;
 import br.com.codemathsz.job_management.exceptions.UserFoundException;
 import br.com.codemathsz.job_management.modules.candidate.CandidateEntity;
 import br.com.codemathsz.job_management.modules.candidate.CandidateRepository;
+import br.com.codemathsz.job_management.modules.candidate.dto.ProfileCandidateResponseDTO;
 import br.com.codemathsz.job_management.modules.candidate.useCases.CreateCandidateUseCase;
 import br.com.codemathsz.job_management.modules.candidate.useCases.ListAllJobsByFilterUseCase;
 import br.com.codemathsz.job_management.modules.candidate.useCases.ProfileCandidateUseCase;
@@ -50,6 +51,19 @@ public class CandidateController {
 
     @GetMapping("/")
     @PreAuthorize("hasRole('CANDIDATE')")
+    @Tag(name = "Candidato", description = "Informações do candidato")
+    @Operation(summary = "Perfil do candidato", description = "Essa função é responsável por buscar as informações do perfil do candidato")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", content = {
+            @Content(
+                schema = @Schema(
+                        implementation = ProfileCandidateResponseDTO.class
+                )
+            )
+        }),
+        @ApiResponse(responseCode = "400", description = "User not found")
+    })
+    @SecurityRequirement(name = "jwt_auth")
     public ResponseEntity<Object> getCandidate(HttpServletRequest req){
         var candidateId = req.getAttribute("candidate_id");
         try{
@@ -65,13 +79,13 @@ public class CandidateController {
     @Tag(name = "Candidato", description = "Informações do candidato")
     @Operation(summary = "Listagem de vagas disponiveis para o candidato", description = "Essa função é responsável por listar todas as vagas disponiveis baseada nos filtros")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = {
-                @Content(
-                    array = @ArraySchema(schema = @Schema(
-                        implementation = JobEntity.class
-                    ))
-                )
-            })
+        @ApiResponse(responseCode = "200", content = {
+            @Content(
+                array = @ArraySchema(schema = @Schema(
+                    implementation = JobEntity.class
+                ))
+            )
+        })
     })
     @SecurityRequirement(name = "jwt_auth")
     public List<JobEntity> findJobByFilter(@RequestParam String filter){
