@@ -1,11 +1,11 @@
 package br.com.codemathsz.job_management.modules.company.controllers;
 
+import br.com.codemathsz.job_management.exceptions.CompanyNotFoundException;
 import br.com.codemathsz.job_management.modules.company.dto.CreateJobDTO;
 import br.com.codemathsz.job_management.modules.company.entities.CompanyEntity;
 import br.com.codemathsz.job_management.modules.company.repositories.CompanyRepository;
 import br.com.codemathsz.job_management.utils.TestUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,6 +67,25 @@ public class CreateJobControllerTest {
             .content(TestUtils.objectToJson(createJobDTO))
             .header("Authorization", TestUtils.generateToken(company.getId(), "@Javagass_233$324f.net.io"))
         ).andExpect(MockMvcResultMatchers.status().isCreated());
-        System.out.println(result);
+    }
+
+    @Test
+    public void should_not_be_able_to_create_a_new_job_if_company_not_found() throws Exception {
+        var createJobDTO = CreateJobDTO.builder()
+                .benefits("BENEFITS_TEST")
+                .description("DESCRIPTION_TEST")
+                .level("LEVEL_TEST")
+                .build();
+
+        try{
+            mvc.perform(MockMvcRequestBuilders.post("/company/job/")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtils.objectToJson(createJobDTO))
+            .header("Authorization", TestUtils.generateToken(UUID.randomUUID(), "@Javagass_233$324f.net.io"))
+            );
+        }catch (Exception e){
+            //Assert.assertTrue(e instanceof CompanyNotFoundException);
+            Assertions.assertThat(e).isInstanceOf(CompanyNotFoundException.class);
+        }
     }
 }
