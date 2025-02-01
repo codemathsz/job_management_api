@@ -5,9 +5,11 @@ import br.com.codemathsz.job_management.modules.company.dto.CreateJobDTO;
 import br.com.codemathsz.job_management.modules.company.entities.CompanyEntity;
 import br.com.codemathsz.job_management.modules.company.repositories.CompanyRepository;
 import br.com.codemathsz.job_management.utils.TestUtils;
-import org.assertj.core.api.Assertions;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -77,15 +79,10 @@ public class CreateJobControllerTest {
                 .level("LEVEL_TEST")
                 .build();
 
-        try{
-            mvc.perform(MockMvcRequestBuilders.post("/company/job/")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtils.objectToJson(createJobDTO))
-            .header("Authorization", TestUtils.generateToken(UUID.randomUUID(), "@Javagass_233$324f.net.io"))
-            );
-        }catch (Exception e){
-            //Assert.assertTrue(e instanceof CompanyNotFoundException);
-            Assertions.assertThat(e).isInstanceOf(CompanyNotFoundException.class);
-        }
+        mvc.perform(MockMvcRequestBuilders.post("/company/job/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtils.objectToJson(createJobDTO))
+                .header("Authorization", TestUtils.generateToken(UUID.randomUUID(), "@Javagass_233$324f.net.io"))
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }
