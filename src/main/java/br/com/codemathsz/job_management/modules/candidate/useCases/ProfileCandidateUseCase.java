@@ -1,5 +1,6 @@
 package br.com.codemathsz.job_management.modules.candidate.useCases;
 
+import br.com.codemathsz.job_management.exceptions.UserNotFoundException;
 import br.com.codemathsz.job_management.modules.candidate.CandidateRepository;
 import br.com.codemathsz.job_management.modules.candidate.dto.ProfileCandidateResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +16,14 @@ public class ProfileCandidateUseCase {
     private CandidateRepository repository;
 
     public ProfileCandidateResponseDTO execute(UUID candidateId){
-        var candidate = this.repository.findById(candidateId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        var candidate = this.repository.findById(candidateId).orElseThrow(UserNotFoundException::new);
 
         return ProfileCandidateResponseDTO.builder()
-                .description(candidate.getDescription())
-                .username(candidate.getUsername())
-                .email(candidate.getEmail())
-                .name(candidate.getName())
-                .id(candidate.getId())
-                .build();
+            .description(candidate.getDescription())
+            .username(candidate.getUsername())
+            .email(candidate.getEmail())
+            .name(candidate.getName())
+            .id(candidate.getId())
+        .build();
     }
 }
