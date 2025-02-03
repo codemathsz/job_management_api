@@ -23,3 +23,13 @@ jobs:
         run: docker build -t codemathsz/management_jobs .
       - name: Publish image
         run: docker push codemathsz/management_jobs
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Pull image docker hub
+        run: docker pull codemathsz/management_jobs:latest
+      - name: remove container
+        run: docker rm -f management-jobs
+      - name: Run docker container
+        run: docker run -d -p 8080:8080 -e DATABASE_URL=${{secrets.DATABASE_URL}} -e DATABASE_PASSWORD=${{secrets.DATABASE_PASSWORD}} -e DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}} --name management-jobs codemathsz/management_jobs
